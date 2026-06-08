@@ -10,7 +10,7 @@ from core.database import get_session
 from models.receita import Receita
 
 router = APIRouter(prefix="/receitas", tags=["Receitas"])
-UPLOAD_DIR = "uploads/receitas"
+UPLOAD_DIR =  os.getenv("UPLOAD_DIR", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

@@ -11,7 +11,7 @@ from models.receita import Receita
 
 router = APIRouter(prefix="/receitas", tags=["Receitas"])
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
