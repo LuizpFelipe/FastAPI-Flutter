@@ -1,19 +1,25 @@
 import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import receita_router, ingrediente_router, receita_ingrediente_router, inteligencia_router
-from sqlmodel import SQLModel
-from core.database import engine 
 from fastapi.staticfiles import StaticFiles
+from sqlmodel import SQLModel
+
+from routers import (
+    receita_router, 
+    ingrediente_router, 
+    receita_ingrediente_router, 
+    inteligencia_router
+)
+from core.database import engine 
 
 app = FastAPI(title="Minha API de Receitas")
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
+
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
-    
-app.mount("/static", StaticFiles(directory=UPLOAD_DIR), name="static")
+
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
