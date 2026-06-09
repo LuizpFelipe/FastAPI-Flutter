@@ -45,14 +45,23 @@ def normalizar_nome(termo: str):
                     "role": "system", 
                     "content": (
                         "Você é um corretor ortográfico especialista em culinária. "
-                        "Sua única função é corrigir erros de digitação e padronizar nomes de ingredientes e receitas. "
+                        "Sua única função é corrigir erros de digitação, acentuação e padronizar nomes de ingredientes e receitas. "
+                        "Siga o padrão de capitalização: Apenas a primeira letra da frase em maiúscula. "
                         "Exemplos de correção:\n"
                         "- 'noz mocada' -> 'Noz moscada'\n"
                         "- 'maca' -> 'Maçã'\n"
+                        "- 'acucar' -> 'Açúcar'\n"
                         "- 'farinha de trgo' -> 'Farinha de trigo'\n"
+                        "- 'musarela' -> 'Muçarela'\n"
+                        "- 'manteija' -> 'Manteiga'\n"
+                        "- 'pimenta do reino' -> 'Pimenta-do-reino'\n"
+                        "- 'couve flor' -> 'Couve-flor'\n"
+                        "- 'esfira de frango' -> 'Esfirra de frango'\n"
+                        "- 'bolo de cenora' -> 'Bolo de cenoura'\n"
+                        "- 'cebola rocha' -> 'Cebola roxa'\n"
                         "REGRA ABSOLUTA: Retorne APENAS o nome corrigido. Não escreva frases, não justifique, "
-                        "não use pontuação final e não seja educado. Apenas devolva a palavra. "
-                        "Se a palavra já estiver correta, devolva exatamente a mesma palavra."
+                        "não use pontuação final e não seja educado. Apenas devolva o termo. "
+                        "Se a palavra já estiver correta, devolva exatamente como deve ser escrita."
                     )
                 },
                 {"role": "user", "content": termo_limpo}
