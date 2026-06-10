@@ -3,6 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlmodel import Session, select
 from typing import List, Optional
+from sqlalchemy.exc import IntegrityError
 
 from core.database import get_session
 from models.ingrediente import Ingrediente
@@ -100,14 +101,23 @@ def apagar_ingrediente(ingrediente_id: int, session: Session = Depends(get_sessi
     Remove definitivamente um ingrediente do sistema.
     
     Verifica se o ID existe antes de efetuar a exclusão. 
-    Nota: Se o ingrediente estiver vinculado a alguma ficha técnica (ReceitaIngrediente),
-    a exclusão poderá falhar caso existam restrições de chave estrangeira (Foreign Key constraints) 
-    configuradas no banco de dados.
+    Se o ingrediente estiver vinculado a alguma ficha técnica (tabela ReceitaIngrediente),
+    a operação no banco de dados falhará por restrição de integridade (Foreign Key).
+    Nesse caso, a transação é desfeita (rollback) e um erro 400 (Bad Request) 
+    é retornado de forma estruturada para que o cliente (Frontend) possa exibir um aviso.
     """
     ingrediente = session.get(Ingrediente, ingrediente_id)
     if not ingrediente:
         raise HTTPException(status_code=404, detail="Ingrediente não encontrado")
     
-    session.delete(ingrediente)
-    session.commit()
-    return {"mensagem": "Ingrediente removido com sucesso"}
+    try:
+        session.delete(ingrediente)
+        session.commit()
+        return {"mensagem": "Ingrediente removido com sucesso"}
+    except IntegrityError:
+        session.rollback() 
+        
+        raise HTTPException(
+            status_code=400, 
+            detail="O ingrediente está vinculado a uma ou mais fichas técnicas. Remova o vínculo antes de excluir."
+        )
